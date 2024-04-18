@@ -25,7 +25,7 @@ ApplicationWindow {
         onAccepted: {
             output.text = "Selected image folder: " + reportCreator.setFolder(currentFolder)
             output.visible = true
-            startReport.visible = true
+            startReport.enabled = true
 
         }
     }
@@ -59,12 +59,12 @@ ApplicationWindow {
         ColumnLayout {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             Button {
-            id: startReport
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            text: "Create Report"
-            visible: false
-            onClicked: {
-                    output.text = reportCreator.createReport(tag.text, reportName.text)
+                id: startReport
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                text: "Create Report"
+                enabled: false
+                onClicked: {
+                        output.text = reportCreator.createReport(tag.text, reportName.text)
                 }
             }
             Text {

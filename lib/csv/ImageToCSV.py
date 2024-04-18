@@ -19,11 +19,11 @@ class CSVHandler(object):
 				self.csv = f"{header}\n"
 		else:
 			self.csv = f"{header}\n"
+		return True
 
 	def addImageData(self, pathToImage):
 		rows	: list = self._getRowsFromImage(pathToImage)
 		rowLength = len(rows)
-		dataset : list = []
 
 		for iRow in range(0, rowLength):
 			rows[iRow] = rows[iRow].replace(';', '')
@@ -134,13 +134,19 @@ class CSVHandler(object):
 		return rows
 
 	def addDataFromImageFolder(self, pathToFolder, extention='.png'):
+		imageFound = False
 		for file in os.listdir(pathToFolder):
 			if file.endswith(".png"):
 				self.addImageData(f'{pathToFolder}/{file}')
+				imageFound = True
+		return imageFound
 
 	def saveLinesToCSV(self, pathToCSV = '_result.csv'):
-		for line in self.CSV_rows:
-			self.csv += line
+		if len(self.CSV_rows) != 0:
+			for line in self.CSV_rows:
+				self.csv += line
+		else:
+			return False
 		# creating directories if none existant
 		if '/' in pathToCSV:
 			directories = pathToCSV[:pathToCSV.rfind('/')]
@@ -149,3 +155,4 @@ class CSVHandler(object):
 		# saving csv
 		with open(pathToCSV, "w") as text_file:
 			text_file.write(self.csv)
+		return True

@@ -1,4 +1,4 @@
-import sys
+import sys, os
 
 from datetime import timedelta
 from PySide6.QtCore import QObject, Slot
@@ -20,10 +20,11 @@ class ReportCreator(QObject):
 	@Slot(str, result=str)
 	def setFolder(self, folder):
 		self.folder = folder[8:]
-		return folder[folder.rfind('/')+1:]
+		return '...' + folder[folder.rfind('/')-4:]
 
 	@Slot(str, str, result=str)
 	def createReport(self, tag='Untagged', reportName='result'):
+		success = False
 		if tag == "":
 			tag = 'Untagged'
 		if reportName == "":
@@ -31,13 +32,19 @@ class ReportCreator(QObject):
 		reportName = reportName + '.csv'
 		csvHandler = CSVHandler()
 		csvHandler.initializeCSV(header='IncidentNr;Date;AdditionalTags;StartedBy;Title', CSVtoLoad=f'./Reports/{tag}/{reportName}')
-		csvHandler.addDataFromImageFolder(self.folder)
-		csvHandler.saveLinesToCSV(pathToCSV=f'./Reports/{tag}/{reportName}')
-		return f'Saved report to ./Reports/{tag}/{reportName}'
+		success = csvHandler.addDataFromImageFolder(self.folder)
+		if success:
+			success = csvHandler.saveLinesToCSV(pathToCSV=f'./Reports/{tag}/{reportName}')
+		else:
+			folder = '...' + self.folder[self.folder.rfind('/')-4:]
+			return f'No .png files in selected {folder} folder'
+		if success:
+			return f'Saved report to ./Reports/{tag}/{reportName}'
+		else:
+			return f'Failed to generate report'
 
 if __name__ == '__main__':
 	app = QGuiApplication(sys.argv)
-	#app.setWindowIcon(QIcon('./lib/images/calendar.png'))
 	QQuickStyle.setStyle("Material")
 	engine = QQmlApplicationEngine()
 
