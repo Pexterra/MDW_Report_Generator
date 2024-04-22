@@ -1,1 +1,5 @@
 /Reports
+*.vs
+*.pyc
+*.csv
+*.xlsx
