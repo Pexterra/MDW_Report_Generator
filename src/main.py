@@ -6,7 +6,7 @@ from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine, QmlElement
 from PySide6.QtQuickControls2 import QQuickStyle
 
-from py.report_generator import ReportGenerator
+from py.reportGenerator import ReportGenerator
 
 if __name__ == '__main__':
 	app = QGuiApplication(sys.argv)

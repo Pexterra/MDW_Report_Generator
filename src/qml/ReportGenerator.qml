@@ -43,21 +43,22 @@ ApplicationWindow {
                     folderDialog.open()
             }
             }
-            TextArea{
+            TextField{
                 id: tag
                 Layout.fillWidth: true
                 Layout.margins: 10
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 placeholderText: "Tag"
-                wrapMode: TextEdit.Wrap
+                
+                wrapMode: TextInput.NoWrap
             }
-            TextArea{
+            TextField{
                 id: reportName
                 Layout.fillWidth: true
                 Layout.margins: 10
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 placeholderText: "Report Name"
-                wrapMode: TextEdit.Wrap
+                wrapMode: TextInput.NoWrap
             }
             Button {
                 id: startReport
@@ -65,7 +66,7 @@ ApplicationWindow {
                 text: "Create Report"
                 enabled: false
                 onClicked: {
-                    reportGenerator.createReport(tag.text, reportName.text)
+                    reportGenerator.createReport()
                 }
             }
         }

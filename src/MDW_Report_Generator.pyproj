@@ -24,12 +24,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="main.py" />
-    <Compile Include="py\csv\ImageToCSV.py" />
-    <Compile Include="py\report_generator.py" />
+    <Compile Include="py\csv\csvHandler.py" />
+    <Compile Include="py\imageHandling\imageToIncident.py" />
+    <Compile Include="py\reportGenerator.py" />
+    <Compile Include="py\utils\incident.py" />
+    <Compile Include="py\utils\thread.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="py\" />
     <Folder Include="py\csv\" />
+    <Folder Include="py\imageHandling\" />
+    <Folder Include="py\utils\" />
     <Folder Include="qml\" />
   </ItemGroup>
   <ItemGroup>
