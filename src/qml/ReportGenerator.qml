@@ -41,24 +41,7 @@ ApplicationWindow {
                 text: "Select Image Folder"
                 onClicked: {
                     folderDialog.open()
-            }
-            }
-            TextField{
-                id: tag
-                Layout.fillWidth: true
-                Layout.margins: 10
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-                placeholderText: "Tag"
-                
-                wrapMode: TextInput.NoWrap
-            }
-            TextField{
-                id: reportName
-                Layout.fillWidth: true
-                Layout.margins: 10
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-                placeholderText: "Report Name"
-                wrapMode: TextInput.NoWrap
+                }
             }
             Button {
                 id: startReport
@@ -79,7 +62,7 @@ ApplicationWindow {
                 text: "Current folder: " + reportGenerator.folder
                 font.pointSize : 10
                 color: "white"
-            }
+                }
             Flickable {
             id: flickable
             Layout.fillWidth: true
@@ -90,9 +73,10 @@ ApplicationWindow {
                 id: output
                 text: reportGenerator.output
                 font.letterSpacing: 1
-            }
+                }
 
             ScrollBar.vertical: ScrollBar { }
+            ScrollBar.horizontal: ScrollBar { }
             }
         }
     }

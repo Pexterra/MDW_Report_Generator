@@ -2,11 +2,8 @@ import os
 from time import strftime, localtime
 from collections import OrderedDict
 
-import pandas as pd
-
 from PySide6.QtCore import QObject, Slot, Property, Signal, QThreadPool
-from PySide6.QtQml import QQmlApplicationEngine, QmlElement
-from PySide6.QtQuickControls2 import QQuickStyle
+from PySide6.QtQml import QmlElement
 
 from py.csv.csvHandler import CSVHandler
 from py.utils.incident import Incident
@@ -64,12 +61,12 @@ class ReportGenerator(QObject):
 				imgToIncident.getIncidentsFromImage(image, incidents, dataTracker, outputFn)
 
 		incidents = OrderedDict(sorted(incidents.items()))
-		officers = []
+		officers : list[str] = []
 		for incident in incidents.values():
 			officers.append(incident.startedBy)
 		officers = list(set(officers))
 
-		reports = []
+		reports : list[str] = []
 		reportName = '_Incidents'
 
 		fullReport = 'IncidentNr;Date;Involved;StartedBy;Title\n'
@@ -79,19 +76,27 @@ class ReportGenerator(QObject):
 		outputFn(f'Created full incident report [../Reports/{subFolder}/csv/{reportName}.csv]')
 
 		officers = sorted(officers)
+		officerIncidentCount: dict[str, (int, int)] = {}
+
 		for officer in officers:
 			report = 'IncidentNr;Date;Involved;StartedBy;Title\n'
+			involved : int = 0
+			started : int = 0
 			for incident in incidents.values():
 				if officer in incident.involvedOfficers or officer in incident.startedBy:
+					involved += 1
+					if officer in incident.startedBy:
+						started +=1
 					report += f'{incident.ID};{incident.date};{incident.involvedOfficers};{incident.startedBy};{incident.title}\n'
 			reports.append(csvHandler.saveToCSV(report, f'../Reports/{subFolder}/csv/{officer}.csv'))
 			outputFn(f'Created csv for {officer} [../Reports/{subFolder}/csv/{officer}.csv]')
+			officerIncidentCount[officer] = (involved, started)
 
 		if os.path.exists(f'../Reports/{subFolder}/Incidents.xlsx'):
 			os.remove(f'../Reports/{subFolder}/Incidents.xlsx')
-		for report in reports:
-			csvHandler.add_csv_to_excel(report, f'../Reports/{subFolder}/Incidents.xlsx')
-		outputFn(f'Created full incident Excel file [../Reports/{subFolder}/Incidents.xlsx]')
+
+		csvHandler.createOverviewSheet(reports, f'../Reports/{subFolder}/Incidents.xlsx', officerIncidentCount, outputFn)
+
 
 
 	def _getFoldersWithImages(self, extention = '.png'):

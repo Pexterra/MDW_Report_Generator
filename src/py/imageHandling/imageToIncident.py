@@ -11,10 +11,10 @@ class DataTracker(object):
 class ImageToIncident(object):
 
 	def getIncidentsFromImage(self, pathToImage, existingIncidents: dict[int, Incident], dataTracker : DataTracker, outputFn = None):
-		rows	: list = self._getRowsFromImage(pathToImage)
+		rows : list = self._getRowsFromImage(pathToImage)
 		rowLength = len(rows)
 
-		self.existingIncidents = existingIncidents
+		self.existingIncidents = existingIncidents.copy()
 
 		for iRow in range(0, rowLength):
 			row = rows[iRow]
@@ -47,7 +47,8 @@ class ImageToIncident(object):
 
 			dataTracker.updated += 1
 			existingIncidents[self.incident.ID] = self.incident
-			outputFn(f"Added/Updated Incident: {self.incident.ID}\n\t (A) {self.incident.startedBy}\n\t\t (O) {self.incident.involvedOfficers} \n\t\t\t{self.incident.title}")
+			if outputFn:
+				outputFn(f"Added/Updated Incident: {self.incident.ID}\n\t (A) {self.incident.startedBy}\n\t\t (O) {self.incident.involvedOfficers} \n\t\t\t{self.incident.title}")
 					
 	def _isIdentifier(self, row):
 		if row.startswith('#') and (row.endswith('AM') or row.endswith('PM')):
@@ -108,21 +109,22 @@ class ImageToIncident(object):
 	def _getRowsFromImage(self, pathToImage: str) -> list:
 		image = cv2.imread(pathToImage)
 		image = cv2.resize(image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
-		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-		thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+		image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+		image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 		
-		data: str = pytesseract.image_to_string(thresh, lang='eng',config='--psm 4')
+		data: str = pytesseract.image_to_string(image, lang='eng',config='--psm 4')
 		rows: list = data.split('\n')
+
 		for row in rows:
 			if row == "":
 				rows.remove(row)
 		return rows
 
 	def getImages(self, pathToFolder, extention='.png'):
-		images = []
-		imagesCount = 0
+		images : list[str] = []
+		imageCount = 0
 		for file in os.listdir(pathToFolder):
 			if file.endswith(".png"):
 				images.append(f'{pathToFolder}/{file}')
-				imagesCount += 1
-		return images, imagesCount
+				imageCount += 1
+		return images, imageCount
